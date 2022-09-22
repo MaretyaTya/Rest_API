@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class TodoRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,9 @@ class LoginRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if ($this->method() == Request::METHOD_POST) return true;
+        $todo = $this->route('todo');
+        return auth()->user()->id == $todo->user_id;
     }
 
     /**
@@ -24,8 +26,9 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|string|email',
-            'password' => 'required|string|min:8'
+            'todo' => 'required|string|max:255',
+            'label' => 'nullable|string',
+            'done' => 'nullable|boolean',
         ];
     }
 }
